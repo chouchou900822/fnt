@@ -122,7 +122,7 @@ async function get(url) {
   for (let key in serviceRes) {
     envFileContent += `VUE_APP_${key}=${serviceRes[key]}\n`;
   }
-  exec(`echo "${envFileContent}" > ./${folderResponse.folder}/.env.development`, function (error, stdout, stderr) {
+  exec(`echo "${envFileContent}" > ./${folderResponse.folder}/client/.env.development`, function (error, stdout, stderr) {
     if (error !== null) {
       console.log('exec error: ' + error);
     } else {
