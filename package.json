@@ -1,0 +1,25 @@
+{
+  "name": "fnt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chouchou900822/fnt"
+  },
+  "bin": {
+    "fnt": "index.js"
+  },
+  "author": "edison",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.2.3",
+    "download-git-repo": "^1.0.2",
+    "io-spin": "^0.4.1",
+    "prompts": "^0.1.8",
+    "request": "^2.85.0"
+  }
+}
