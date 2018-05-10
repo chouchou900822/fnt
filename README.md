@@ -14,8 +14,8 @@ $ npm install fnt -g
 
 ## 运行
 ```sh
-$ fnt create test
-$ cd test && npm install && npm run dev
+$ fnt create new-project
+$ cd new-project/ && npm install && npm run dev
 $ cd client && npm install && npm run dev
 ```
 
