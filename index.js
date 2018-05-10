@@ -7,6 +7,8 @@ const colors = require('colors');
 const os = require('os');
 const download = require('download-git-repo');
 const spin = require('io-spin')
+const program = require('commander');
+const package = require('./package.json');
 
 const source = 'https://raw.githubusercontent.com/chouchou900822/template/master';
 
@@ -53,15 +55,8 @@ async function get(url) {
     });
   });
 }
-(async function () {
-  let folders = [{
-    type: 'text',
-    name: 'folder',
-    message: `项目名称`
-  }];
 
-  const folderResponse = await prompts(folders);
-
+async function main(folderResponse) {
   let questions = [{
     message: '选择你的项目类型',
     type: 'select',
@@ -94,41 +89,53 @@ async function get(url) {
   }];
 
   const envResponse = await prompts(inputs);
-  
-  let spinner = spin('代码拉取中...'.green);
-  spinner.start();
-  await downloadFile(folderResponse.folder);
-  spinner.update('80%...');
-  await downloadSingleFile(`/${response.corp}/${response.login}/App.vue?v=${Math.random()}`, `./${folderResponse.folder}/client/src/App.vue`);
-  spinner.update('85%...');
-  await downloadSingleFile(`/${response.corp}/${response.login}/funenc.js?v=${Math.random()}`, `./${folderResponse.folder}/controllers/funenc.js`);
-  spinner.update('90%...');
-  await downloadSingleFile(`/${response.corp}/${response.login}/index.html?v=${Math.random()}`, `./${folderResponse.folder}/client/public/index.html`);
-  spinner.update('95%...');
-  await downloadSingleFile(`/${response.corp}/${response.login}/index.js?v=${Math.random()}`, `./${folderResponse.folder}/routes/index.js`);
-  spinner.update('100%...');
-  spinner.stop();
-  console.log('代码下载成功...'.green);
 
-  let envSpinner = spin('环境变量配置中...'.green);
-  envSpinner.start();
-  let ip = getIPAdress();
-  envResponse.host = `http://${ip}:3000`;
-  let serviceRes = await get(`/admins/info?corp=${response.corp}&login=${response.login}&userid=${envResponse.userid}&appName=${envResponse.appName}`);
-  let envFileContent = '';
-  for (let key in envResponse) {
-    envFileContent += `VUE_APP_${key}=${envResponse[key]}\n`;
-  }
-  for (let key in serviceRes) {
-    envFileContent += `VUE_APP_${key}=${serviceRes[key]}\n`;
-  }
-  exec(`echo "${envFileContent}" > ./${folderResponse.folder}/client/.env.development`, function (error, stdout, stderr) {
-    if (error !== null) {
-      console.log('exec error: ' + error);
-    } else {
-      envSpinner.stop();
-      console.log('环境变量配置完成...'.green);
-      console.log('项目创建完毕...'.green);
+  if (envResponse.userid && envResponse.appName) {
+    let spinner = spin('代码拉取中...'.green);
+    spinner.start();
+    await downloadFile(folderResponse.folder);
+    spinner.update('80%...');
+    await downloadSingleFile(`/${response.corp}/${response.login}/App.vue?v=${Math.random()}`, `./${folderResponse.folder}/client/src/App.vue`);
+    spinner.update('85%...');
+    await downloadSingleFile(`/${response.corp}/${response.login}/funenc.js?v=${Math.random()}`, `./${folderResponse.folder}/controllers/funenc.js`);
+    spinner.update('90%...');
+    await downloadSingleFile(`/${response.corp}/${response.login}/index.html?v=${Math.random()}`, `./${folderResponse.folder}/client/public/index.html`);
+    spinner.update('95%...');
+    await downloadSingleFile(`/${response.corp}/${response.login}/index.js?v=${Math.random()}`, `./${folderResponse.folder}/routes/index.js`);
+    spinner.update('100%...');
+    spinner.stop();
+    console.log('代码下载成功...'.green);
+
+    let envSpinner = spin('环境变量配置中...'.green);
+    envSpinner.start();
+    let ip = getIPAdress();
+    envResponse.host = `http://${ip}:3000`;
+    let serviceRes = await get(`/admins/info?corp=${response.corp}&login=${response.login}&userid=${envResponse.userid}&appName=${envResponse.appName}`);
+    let envFileContent = '';
+    for (let key in envResponse) {
+      envFileContent += `VUE_APP_${key}=${envResponse[key]}\n`;
     }
+    for (let key in serviceRes) {
+      envFileContent += `VUE_APP_${key}=${serviceRes[key]}\n`;
+    }
+    exec(`echo "${envFileContent}" > ./${folderResponse.folder}/client/.env.development`, function (error, stdout, stderr) {
+      if (error !== null) {
+        console.log('exec error: ' + error);
+      } else {
+        envSpinner.stop();
+        console.log('环境变量配置完成...'.green);
+        console.log('项目创建完毕...'.green);
+      }
+    });
+  }
+}
+program
+  .version(package.version)
+  .command('create [name]')
+  .description('新建一个项目')
+  .action(async function (name) {
+    await main({
+      folder: name
+    });
   });
-})();
+program.parse(process.argv);
