@@ -10,12 +10,12 @@
 $ npm install fnt -g
 ```
 
-![avatar](http://onx1jjc4v.bkt.clouddn.com/WX20180508-161007@2x.png)
+![avatar](http://onx1jjc4v.bkt.clouddn.com/fnt.png)
 
 ## 运行
 ```sh
-$ cd test/
-$ npm install && npm run dev
+$ fnt create test
+$ cd test && npm install && npm run dev
 $ cd client && npm install && npm run dev
 ```
 
